@@ -16,9 +16,9 @@ function getConnection(){
 }
 
 
-router.get("/login", (req, res) => {
+router.get("/login/:email/:password", (req, res) => {
     console.log(req.params.email)
-    pool.query("SELECT * FROM users WHERE email = ? AND password = ?", [req.body.email, req.body.password], (err, rows) => {
+    pool.query("SELECT * FROM users WHERE email = ? AND password = ?", [req.params.email, req.params.password], (err, rows) => {
         if(err){
             console.log(err)
             res.sendStatus(500)
