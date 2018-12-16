@@ -7,7 +7,7 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     host: "localhost",
     user: "root",
-    password:"mysql",
+    //password:"mysql",
     database: "blasti_bd"
 })
 
@@ -16,15 +16,29 @@ function getConnection(){
 }
 
 router.get("/all/:category", (req, res) => {
-    pool.query("SELECT * FROM events WHERE category = ? LIMIT 10",[req.params.category], (err, rows) => {
-        if(err){
-            console.log(err)
-            res.sendStatus(500)
-            return
-        }
-        res.status(200)
-        res.json(rows)
-    })
+    var category = req.params.category
+    var query = ""
+    if(category == 0){
+        pool.query("SELECT * FROM events ORDER BY YEAR(start_date), MONTH(start_date), DAY(start_date) LIMIT 10",[req.params.category], (err, rows) => {
+            if(err){
+                console.log(err)
+                res.sendStatus(500)
+                return
+            }
+            res.status(200)
+            res.json(rows)
+        })
+    }else{
+        pool.query("SELECT * FROM events WHERE category = ? LIMIT 10",[req.params.category], (err, rows) => {
+            if(err){
+                console.log(err)
+                res.sendStatus(500)
+                return
+            }
+            res.status(200)
+            res.json(rows)
+        })
+    }
 })
 
 router.get("/specials", (req, res) => {
