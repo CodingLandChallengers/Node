@@ -7,6 +7,7 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     host: "localhost",
     user: "root",
+    password:"mysql",
     database: "blasti_bd"
 })
 
@@ -50,6 +51,17 @@ router.get("/specials", (req, res) => {
     })
 })
 
+router.get("/org/all/:user_id", (req, res) => {
+    pool.query("SELECT e.*, SUM(r.tickets) as bought_tickets FROM events e LEFT JOIN reservations r on e.id = r.event_id WHERE e.user_id = ? group by e.id", [req.params.user_id], (err, rows) => {
+        if(err){
+            console.log(err)
+            res.sendStatus(500)
+            return
+        }
+        res.status(200)
+        res.json(rows)
+    })
+})
 //Find event by id
 router.get("/:id", (req, res) => {
     const queryString = "SELECT * FROM events WHERE id = ?"

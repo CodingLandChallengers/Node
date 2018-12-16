@@ -4,14 +4,16 @@
   "description": "challenge",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
   },
   "author": "Elyes , Seif, and Olfa",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
-    "mysql": "^2.16.0"
+    "mysql": "^2.16.0",
+    "nodemon": "^1.18.9"
   },
   "devDependencies": {
     "eslint": "^5.9.0"
