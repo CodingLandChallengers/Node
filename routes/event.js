@@ -17,9 +17,8 @@ function getConnection(){
 
 router.get("/all/:category", (req, res) => {
     var category = req.params.category
-    var query = ""
     if(category == 0){
-        pool.query("SELECT * FROM events ORDER BY YEAR(start_date), MONTH(start_date), DAY(start_date) LIMIT 10",[req.params.category], (err, rows) => {
+        pool.query("SELECT * FROM events WHERE start_date >= NOW() ORDER BY YEAR(start_date), MONTH(start_date), DAY(start_date) LIMIT 10",[req.params.category], (err, rows) => {
             if(err){
                 console.log(err)
                 res.sendStatus(500)
@@ -42,15 +41,28 @@ router.get("/all/:category", (req, res) => {
 })
 
 router.get("/more/:category", (req, res) => {
-    pool.query("SELECT * FROM events WHERE category = ?",[req.params.category], (err, rows) => {
-        if(err){
-            console.log(err)
-            res.sendStatus(500)
-            return
-        }
-        res.status(200)
-        res.json(rows)
-    })
+    var category = req.params.category
+    if(category == 0){
+        pool.query("SELECT * FROM events WHERE start_date >= NOW() ORDER BY YEAR(start_date), MONTH(start_date), DAY(start_date) LIMIT 50",[req.params.category], (err, rows) => {
+            if(err){
+                console.log(err)
+                res.sendStatus(500)
+                return
+            }
+            res.status(200)
+            res.json(rows)
+        })
+    }else{
+        pool.query("SELECT * FROM events WHERE category = ?",[req.params.category], (err, rows) => {
+            if(err){
+                console.log(err)
+                res.sendStatus(500)
+                return
+            }
+            res.status(200)
+            res.json(rows)
+        })
+    }
 })
 
 router.get("/specials", (req, res) => {
@@ -66,7 +78,7 @@ router.get("/specials", (req, res) => {
 })
 
 router.get("/org/all/:user_id", (req, res) => {
-    pool.query("SELECT e.*, SUM(r.tickets) as bought_tickets FROM events e LEFT JOIN reservations r on e.id = r.event_id WHERE e.user_id = ? group by e.id", [req.params.user_id], (err, rows) => {
+    pool.query("SELECT e.*, SUM(r.tickets) as bought_tickets FROM events e LEFT JOIN reservations r on e.id = r.event_id WHERE e.user_id = ? group by e.id ORDER BY e.start_date DESC", [req.params.user_id], (err, rows) => {
         if(err){
             console.log(err)
             res.sendStatus(500)
