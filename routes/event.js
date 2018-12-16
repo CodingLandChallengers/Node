@@ -7,6 +7,7 @@ const pool = mysql.createPool({
     connectionLimit: 10,
     host: "localhost",
     user: "root",
+    password:"mysql",
     database: "blasti_bd"
 })
 
