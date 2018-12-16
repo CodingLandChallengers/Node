@@ -25,7 +25,7 @@ router.get("/login/:email/:password", (req, res) => {
             return
         }
         res.status(200)
-        res.json(rows)
+        res.json(rows[0])
     })
 })
 
