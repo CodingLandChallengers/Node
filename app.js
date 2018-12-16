@@ -9,8 +9,10 @@ app.use(bodyParser.json())
 app.use("/public", express.static(path.join(__dirname, "public")))
 
 const userRoute = require("./routes/user")
+const eventRoute = require("./routes/event")
 
 app.use("/users", userRoute)
+app.use("/events", eventRoute)
 app.listen(3000, () => {
     console.log("Server is up and listening on port 3000...")
 })
