@@ -49,9 +49,10 @@ router.get("/org/all/:user_id", (req, res) => {
         res.json(rows)
     })
 })
-
-router.get("/{id}", (req, res) => {
-    pool.query("SELECT * FROM events WHERE id = ?", [req.params.id], (err, rows) => {
+//Find event by id
+router.get("/:id", (req, res) => {
+    const queryString = "SELECT * FROM events WHERE id = ?"
+    getConnection().query(queryString, [req.params.id], (err, rows) => {
         if(err){
             console.log(err)
             res.sendStatus(500)
@@ -62,6 +63,31 @@ router.get("/{id}", (req, res) => {
     })
 })
 
+//get available tickets for event
+router.get("/last_tickets/:id", (req, res) => {
+    const queryString = "SELECT (e.tickets - SUM(r.tickets)) available FROM events e JOIN reservations r ON e.id = r.event_id GROUP BY e.id HAVING e.id = ?"
+    getConnection().query(queryString, [req.params.id], (err, rows) => {
+        if(err){
+            console.log(err)
+            res.sendStatus(500)
+            return
+        }
+        res.status(200)
+        res.send(rows[0].available + "")
+    })
+})
 
+//Add Reservation
+router.post("/add_reservation", (req, res) => {
+    const queryString = "INSERT INTO reservations (user_id, event_id, tickets) VALUES(?,?,?)"
+    getConnection().query(queryString, [req.body.user_id, req.body.event_id, req.body.tickets], (err) => {
+        if(err){
+            console.log(err)
+            res.sendStatus(500)
+            return
+        }
+        res.sendStatus(200)
+    })
+})
 
 module.exports = router
