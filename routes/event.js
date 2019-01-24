@@ -121,6 +121,17 @@ router.get("/last_tickets/:id", (req, res) => {
     })
 })
 
+router.get("/search/:keyword", (req, res) => {
+    getConnection().query("SELECT * FROM events WHERE name LIKE ?", ['%'+req.params.keyword+'%'], (err, rows) => {
+        if(err){
+            console.log(err)
+            res.sendStatus(500)
+        }
+        res.status(200)
+        res.send(rows)
+    })
+})
+
 //Add Reservation
 router.post("/add_reservation", (req, res) => {
     const queryString = "INSERT INTO reservations (user_id, event_id, tickets) VALUES(?,?,?)"
